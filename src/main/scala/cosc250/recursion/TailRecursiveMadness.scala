@@ -22,7 +22,7 @@ object NonTail {
     * factorial(n) is 1 * 2 * 3 * ... n
     */
   def factorial(n:Int):Int = {
-    ???
+    if n <= 1 then n else n * factorial(n - 1)
   }
 
   /**
@@ -36,7 +36,7 @@ object NonTail {
     * But unlike Int, summing BigInts has no maximum value.
     */
   def fibonacci(n:Int):BigInt = {
-    ???
+    if n <= 1 then BigInt(n) else fibonacci(n - 1) + fibonacci(n - 2)
   }
 
   // Puzzle: try calling it with a large number - say 100. What breaks?
@@ -74,7 +74,10 @@ object NonTail {
     }
 
     // Now write the body of pascal(n)
-    ???
+    if n <= 0 then List(1) else 
+      val left = 0 :: pascal(n - 1)
+      val right = pascal(n - 1) :+ 0
+      sumPairs(left.zip(right))
   }
 
 }
@@ -107,10 +110,10 @@ object Tail {
 
     //@tailrec
     def fac(n:Int, accum:Int):Int = {
-      ???
+      if n <= 1 then accum else fac(n - 1, n * accum)
     }
 
-    ???
+    fac(n, 1)
   }
 
 
@@ -128,10 +131,10 @@ object Tail {
     // until you reach n=0
     //@tailrec
     def fibInt(n:Int, a:BigInt=0, b:BigInt=1):BigInt = {
-      ???
+      if n <= 0 then a else fibInt(n - 1, b, a + b)
     }
 
-    ???
+    fibInt(n, 0, 1)
   }
 
   // Try fibonacci(60), but not too large or it will take a really long time.
@@ -157,10 +160,16 @@ object Tail {
       }
     }
 
-
     // I'll let you define the inner tail-recursive function this time.
+    @tailrec
+    def intPas(n:Int, l:List[Int] = List(1)):List[Int] = {
+      if (n == 0) l else {
+        val paired = (0 +: l).zip(l :+ 0)
+        intPas(n - 1, sumPairs(paired))
+      }
+    }
 
-    ???
+    intPas(n)
   }
 
 }
@@ -196,7 +205,8 @@ object Roman {
   // @tailrec
   def nextNumeral(n:Int, numerals:List[(String, Int)] = allNumerals):(String, Int) = {
     // either the head pair is the one we want, or call ourselves recursively for the tail
-    ???
+    val (str, value) = numerals.head
+    if value <= n then (str, value) else nextNumeral(n, numerals.tail)
   }
 
   /**
@@ -206,9 +216,11 @@ object Roman {
 
     // Now define an inner tail recursive function that will build up our Roman numeral
     // We keep the string we've built so far in s
-    //@tailrec
+    @tailrec
     def intRom(n:Int, s:String = ""):String = {
-      ???
+      if n <= 0 then s else 
+        val (str, value) = nextNumeral(n, allNumerals)
+        intRom(n - value, s + str)
     }
 
     intRom(n)
@@ -246,9 +258,17 @@ object Puzzle {
     * If not, have two outer cases. Is the destination list empty or not?
     * If not, does the number at the head of the source list match or not match dest(1)?
     */
-  //@tailrec
+  @tailrec
   def nextLine(source:List[Int], dest:List[Int] = Nil):List[Int] = {
-    ???
+    // This is also called the "run-length encoding" of a list
+    source match
+      case Nil => dest.reverse
+      case h :: sourceTail => 
+        dest match
+          case char :: count :: destTail if char == h => 
+            nextLine(sourceTail, char :: count + 1 :: destTail)
+          case _ => 
+            nextLine(sourceTail, h :: 1 :: dest)
   }
 
   /**
@@ -256,9 +276,9 @@ object Puzzle {
     */
   def puzzle(n:Int):List[Int] = {
 
-    //@tailrec
+    @tailrec
     def intPuz(n:Int, line:List[Int] = List(1)):List[Int] = {
-      ???
+      if n <= 0 then line else intPuz(n - 1, nextLine(line))
     }
 
     intPuz(n)
