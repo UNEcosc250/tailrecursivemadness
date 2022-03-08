@@ -1,9 +1,9 @@
 lazy val root = (project in file(".")).
   settings(
-    name := "tutorial2",
-    version := "2021.1",
-    scalaVersion := "3.0.0-RC1"
+    name := "tailrecursivemadness",
+    version := "2022.1",
+    scalaVersion := "3.1.0"
   )
 
-libraryDependencies += "org.scalameta" %% "munit" % "0.7.22" % Test
+libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
 testFrameworks += new TestFramework("munit.Framework")
