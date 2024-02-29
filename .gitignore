@@ -38,6 +38,9 @@ tmp
 .bloop
 metals.sbt
 
+# scala-cli
+.scala-build/
+
 # VSCode
 .vscode
 
